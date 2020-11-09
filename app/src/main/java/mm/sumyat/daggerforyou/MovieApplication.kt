@@ -2,17 +2,19 @@ package mm.sumyat.daggerforyou
 
 import android.app.Activity
 import android.app.Application
+import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasActivityInjector
+import dagger.android.HasAndroidInjector
 import kotlinx.coroutines.InternalCoroutinesApi
 import mm.sumyat.daggerforyou.di.base.AppInjector
 import timber.log.Timber
 import javax.inject.Inject
 
 @InternalCoroutinesApi
-class MovieApplication : Application(), HasActivityInjector {
+class MovieApplication : Application(), HasAndroidInjector {
+
     @Inject
-    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Activity>
+    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Any>
 
     override fun onCreate() {
         super.onCreate()
@@ -23,5 +25,5 @@ class MovieApplication : Application(), HasActivityInjector {
         AppInjector.init(this)
     }
 
-    override fun activityInjector() = dispatchingAndroidInjector
+    override fun androidInjector() = dispatchingAndroidInjector
 }
