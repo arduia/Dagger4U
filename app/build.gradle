@@ -12,7 +12,7 @@ android {
         minSdkVersion androidMinSdkVersion
         versionCode 1
         versionName "1.0"
-
+        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -92,4 +92,10 @@ dependencies {
 
     //Timber
     implementation "com.jakewharton.timber:timber:$timberVersion"
+
+    //RxJava
+    implementation "io.reactivex.rxjava3:rxandroid:$rxAndroidVersion"
+    implementation "io.reactivex.rxjava3:rxjava:$rxAndroidVersion"
+
+    implementation "androidx.multidex:multidex:$multidex_version"
 }

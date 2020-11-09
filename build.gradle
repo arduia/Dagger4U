@@ -41,6 +41,9 @@ buildscript {
 
     //Timber
     ext.timberVersion = '4.7.1'
+    ext.rxAndroidVersion = "3.0.0"
+
+    ext.multidex_version = "2.0.1"
 
     repositories {
         google()
@@ -60,7 +63,7 @@ allprojects {
     repositories {
         google()
         jcenter()
-        
+        maven { url "https://oss.jfrog.org/libs-snapshot" }
     }
 }
 
