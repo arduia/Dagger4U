@@ -22,7 +22,6 @@ class MovieApplication : MultiDexApplication(), HasAndroidInjector {
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
-
         AppInjector.init(this)
     }
 

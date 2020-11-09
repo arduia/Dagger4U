@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import io.reactivex.rxjava3.core.*
 
 /**
  * Defines access layer to movie table
@@ -16,14 +17,14 @@ interface MovieDao {
      * Insert movie into the table
      */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertMovies(movies: List<Movie>): List<Long>
+    fun insertMovies(movies: List<Movie>)
 
     @Query("DELETE FROM movie_table")
-    suspend fun clearAllMovie()
+    fun clearAllMovie()
 
     /**
      * Get all the movie from table
      */
     @Query("SELECT * FROM movie_table")
-    suspend fun getMovies(): List<Movie>
+    fun getMovies(): Observable<List<Movie>>
 }

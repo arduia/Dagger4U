@@ -1,10 +1,11 @@
 package mm.sumyat.daggerforyou.data
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.PublishSubject
+import io.reactivex.rxjava3.subjects.ReplaySubject
 import mm.sumyat.daggerforyou.domain.Repository
 import mm.sumyat.daggerforyou.network.NetworkService
-import mm.sumyat.daggerforyou.network.model.PlayingMoviewsResponse
 import mm.sumyat.daggerforyou.storage.Movie
 import mm.sumyat.daggerforyou.storage.MovieDao
 import mm.sumyat.daggerforyou.util.ViewState
@@ -23,32 +24,31 @@ class RepositoryImpl @Inject constructor(
      * and persist them in the database
      */
 
-    override fun getMovieList(): Flow<ViewState<List<Movie>>> {
-        return flow {
-            //send loading
-            emit(ViewState.loading<List<Movie>>())
-            //send movie list from db
-            emit(ViewState.success(movieDao.getMovies()))
-            //call api
-            val response =service.getPlayingMovie()
-            //save data in db
-            response.movieResults.let {
-                movieDao.insertMovies(it.map {
-                    Movie(
-                        it.id,
-                        it.title,
-                        it.poster_path,
-                        it.vote_average.toString(),
-                        it.overview,
-                        it.release_date
-                    )
-                })
+    override fun getMovieList(): Observable<ViewState<List<Movie>>> {
+
+        return service.getPlayingMovie()
+            .map {  it.movieResults.map {movie->
+                Movie(
+                    movie.id,
+                    movie.title,
+                    movie.poster_path,
+                    movie.vote_average.toString(),
+                    movie.overview,
+                    movie.release_date
+                )
+            }}
+            .doOnNext {
+                movieDao.insertMovies(it)
             }
-            //send latest movie list from db
-            emit(ViewState.success(movieDao.getMovies()))
-        }.catch {
-            emit(ViewState.error(it.message.orEmpty()))
-        }.flowOn(Dispatchers.IO)
+            .switchIfEmpty(movieDao.getMovies())
+            .onErrorResumeWith(movieDao.getMovies())
+            .map { ViewState.success(it) }
+            .onErrorReturn {error ->
+                ViewState.error(error.message.orEmpty())
+            }
+            .subscribeOn(Schedulers.io())
+            .startWithItem(ViewState.loading())
+
     }
 
 }

@@ -20,7 +20,7 @@ buildscript {
     ext.recyclerViewVersion = '1.1.0'
     ext.cardViewVersion = '1.0.0'
     ext.lifecycleVersion = "2.2.0"
-    ext.roomVersion = "2.2.5"
+    ext.roomVersion = "2.3.0-alpha03"
     ext.constraintLayoutVersion = '2.0.4'
 
     //Paging
